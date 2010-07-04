@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="Manage Meeetings">
+	
+	<fx:Metadata>
+		[Event(name="createMeeting", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]	
+		[Event(name="updateMeeting", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]	
+		[Event(name="deleteMeeting", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]
+	</fx:Metadata>
+		
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			import nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent;
+			import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
+			
+			[Bindable]
+			public var meetings:ArrayCollection = new ArrayCollection();
+			
+			private function handleMeetingButton(event:MouseEvent):void
+			{
+				if (meetingGrid.selectedItem != null)
+				{
+					updateMeeting();
+				}
+				else
+				{
+					createMeeting();
+				}
+			}
+			
+			private function handleDeleteButton(event:MouseEvent):void
+			{
+				var newMeeting:MeetingVO = new MeetingVO();
+				newMeeting.id = meetingGrid.selectedItem.id;
+				newMeeting.title = meetingTitle.text;
+				newMeeting.date = meetingDate.selectedDate;
+				this.dispatchEvent(new MeetingEvent(MeetingEvent.DELETE,newMeeting));
+				meetingGrid.selectedItem = null;
+				clearForm();	
+			}
+			
+			private function updateMeeting():void
+			{	
+				var newMeeting:MeetingVO = new MeetingVO();
+				newMeeting.id = meetingGrid.selectedItem.id;
+				newMeeting.title = meetingTitle.text;
+				newMeeting.date = meetingDate.selectedDate;
+				this.dispatchEvent(new MeetingEvent(MeetingEvent.UPDATE,newMeeting));
+				meetingGrid.selectedItem = null;
+				clearForm();	
+			}
+			
+			private function createMeeting():void
+			{	
+				var newMeeting:MeetingVO = new MeetingVO();
+				newMeeting.title = meetingTitle.text;
+				newMeeting.date = meetingDate.selectedDate;
+				this.dispatchEvent(new MeetingEvent(MeetingEvent.CREATE,newMeeting));
+				clearForm();
+			}
+			
+			private function clearForm():void
+			{
+				meetingId.text = "";
+				meetingTitle.text = "";
+				meetingDate.selectedDate = null;
+			}
+			
+			private function renderDate(item:Object, col:DataGridColumn):String
+			{
+				return item.date.toLocaleDateString();
+			}
+		
+		]]>
+	</fx:Script>
+	
+	<mx:VBox width="50%">
+		
+		<s:Label text="Meeting Overview" styleName="gridHeader"/>
+		
+		<mx:DataGrid id="meetingGrid" width="100%" dataProvider="{meetings}">
+			<mx:columns>
+				<mx:DataGridColumn dataField="title" headerText="Title" />
+				<mx:DataGridColumn dataField="date" headerText="Date" labelFunction="renderDate" />
+			</mx:columns>
+		</mx:DataGrid>	
+			
+	</mx:VBox>
+	
+	<mx:Form>
+		<mx:FormHeading label="Meeting"/>
+		
+		<mx:FormItem label="Id">
+			<s:Label id="meetingId" text="{meetingGrid.selectedItem.id}" />
+		</mx:FormItem>
+		
+		<mx:FormItem label="Title">
+			<s:TextInput id="meetingTitle" text="{meetingGrid.selectedItem.title}" />
+		</mx:FormItem>
+		
+		<mx:FormItem label="Pick a date">
+			<mx:DateField id="meetingDate" selectedDate="{meetingGrid.selectedItem.date}"/>
+		</mx:FormItem>
+		
+		<mx:FormItem >
+			<s:Button id="meetingButton" click="handleMeetingButton(event)" label="{meetingGrid.selectedItem!=null?'Save meeting':'Create meeting'}"/>
+		</mx:FormItem>
+		
+		<mx:FormItem >
+			<s:Button id="deleteButton" click="handleDeleteButton(event)" label="Delete meeting" enabled="{meetingGrid.selectedItem!=null?true:false}" />
+		</mx:FormItem>		
+	</mx:Form>
+	
+</mx:HBox>

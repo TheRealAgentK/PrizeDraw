@@ -1,0 +1,37 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+mx|HBox
+{
+	horizontalGap: 8;
+	paddingBottom: 5;
+	paddingLeft: 10;
+	paddingRight: 10;
+	paddingTop: 5;
+}
+	
+mx|VBox
+{
+	horizontalGap: 8;
+	paddingBottom: 5;
+	paddingLeft: 10;
+	paddingRight: 10;
+	paddingTop: 5;
+}
+
+mx|Form
+{
+	paddingTop: 2;
+}
+
+s|Label.gridHeader
+{
+	fontWeight: bold;
+}
+
+@font-face {
+	src: url("assets/fonts/ArialBlack.ttf");
+	fontFamily: "ArialBlackCustom";
+	embedAsCFF: false;
+}

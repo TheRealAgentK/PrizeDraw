@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="Run Prize Draw"
+		 creationComplete="init()">
+
+	<fx:Metadata>
+		[Event(name="drawAttendee", type="nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent")]	
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[		
+			import caurina.transitions.*;
+			
+			import flupie.textanim.*;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.mx_internal;
+			import mx.events.ListEvent;
+			
+			import nz.co.codec.flexorm.EntityManager;
+			import nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent;
+			import nz.co.ventego.demo.ix.prizeDraw.model.AttendeeVO;
+		
+			[Bindable]
+			public var attendees:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var drawAttendees:ArrayCollection;
+			[Bindable]
+			public var meetings:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			private var winnerAttendee:AttendeeVO;
+			
+			private var a:TextField; 
+			private var winnerAnim:TextAnim; 
+			
+			[Bindable]
+			public static var entityManager:EntityManager = EntityManager.instance;
+			
+			private function init():void
+			{
+				a = output.mx_internal::getTextField() as flash.text.TextField;
+				winnerAnim = new TextAnim(a);
+			}
+			
+			private function myEffect(block:TextAnimBlock):void {
+				block.scaleX = block.scaleY = 0;
+				block.rotation = -120;
+				Tweener.addTween(block, {rotation:0, scaleX:1, scaleY:1, time:.5, transition:"easeoutback"});
+			}
+			
+			private function handlePrizeDrawButton(event:MouseEvent):void
+			{			
+				var randomWinnerIndex:int;
+				
+				drawAttendees = new ArrayCollection(attendees.source as Array);
+				drawAttendees.filterFunction = filterAttendees;
+				drawAttendees.refresh();
+				
+				randomWinnerIndex = 0 + Math.floor(Math.random()*(drawAttendees.length-1));
+				winnerAttendee = drawAttendees.getItemAt(randomWinnerIndex) as AttendeeVO;
+				
+				if (flagWinner.selected)
+				{
+					winnerAttendee.winner = true;
+					this.dispatchEvent(new AttendeeEvent(AttendeeEvent.DRAW,winnerAttendee));
+				}			
+				
+				winnerAnim.text = winnerAttendee.firstName + " " + winnerAttendee.lastName;	
+				winnerAnim.mode = TextAnimMode.RANDOM;
+				winnerAnim.anchorY = TextAnimAnchor.BOTTOM;
+				winnerAnim.interval = 200;
+				winnerAnim.blocksVisible = false;
+				winnerAnim.delay = 150;
+				winnerAnim.effects = myEffect;
+				winnerAnim.start();
+			} 
+			
+			public function onComplete(e:Event):void{
+				trace("complete");	
+			}
+			
+			private function filterAttendees(item:Object):Boolean
+			{
+				var isMatch:Boolean = false;
+				
+				if (item.meeting.id == meetingCombo.selectedItem.id && item.winner != true)
+				{
+					isMatch = true;
+				}
+				
+				return isMatch;
+			}
+
+			private function meetingChangedHandler(event:ListEvent):void
+			{
+				drawAttendees = new ArrayCollection(attendees.source as Array);
+				drawAttendees.filterFunction = filterAttendees;
+				drawAttendees.refresh();			
+			}
+
+		]]>
+	</fx:Script>
+	
+	<mx:Form>
+		<mx:FormHeading label="Prize Draws"/>
+		
+		<mx:FormItem label="Select meeting">
+			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" change="meetingChangedHandler(event)"/>
+		</mx:FormItem>
+	
+		<mx:FormItem label="Remove winner from pool">
+			<s:CheckBox id="flagWinner" />
+		</mx:FormItem>
+			
+		<mx:FormItem label="Pool size">
+			<s:Label id="attendeePoolSize" text="{drawAttendees.length}" />
+		</mx:FormItem>
+		
+		<mx:FormItem>
+			<s:Button id="prizeDrawButton" click="handlePrizeDrawButton(event)" label="Chose winner" enabled="{drawAttendees.length>0}"/>
+		</mx:FormItem>
+	</mx:Form>
+	
+	<mx:Text fontFamily="ArialBlackCustom" fontSize="40" id="output" />
+</mx:VBox>

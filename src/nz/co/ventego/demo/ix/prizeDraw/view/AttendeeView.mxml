@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="Manage Attendees">
+
+	<fx:Metadata>
+		[Event(name="createAttendee", type="nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent")]	
+		[Event(name="updateAttendee", type="nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent")]	
+		[Event(name="deleteAttendee", type="nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.ListEvent;
+			
+			import nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent;
+			import nz.co.ventego.demo.ix.prizeDraw.model.AttendeeVO;
+			import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
+			import nz.co.ventego.demo.ix.prizeDraw.model.ModelLocator;
+			import nz.co.ventego.util.ArrayCollectionUtils;
+			
+			[Bindable]
+			public var attendees:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var meetings:ArrayCollection = new ArrayCollection();
+					
+			private function handleAttendeeButton(event:MouseEvent):void
+			{
+				if (attendeeGrid.selectedItem != null)
+				{
+					updateAttendee();
+				}
+				else
+				{
+					createAttendee();
+				}
+			}
+			
+			private function handleDeleteButton(event:MouseEvent):void
+			{
+				var newAttendee:AttendeeVO = new AttendeeVO();
+				newAttendee.id = attendeeGrid.selectedItem.id;
+				newAttendee.firstName = attendeeFirstName.text;
+				newAttendee.lastName = attendeeLastName.text;
+				newAttendee.email = attendeeEmail.text;
+				newAttendee.meeting = attendeeMeeting.selectedItem as MeetingVO;
+				this.dispatchEvent(new AttendeeEvent(AttendeeEvent.DELETE,newAttendee));
+				attendeeGrid.selectedItem = null;
+				clearForm();	
+			}
+			
+			private function updateAttendee():void
+			{	
+				var newAttendee:AttendeeVO = new AttendeeVO();
+				newAttendee.id = attendeeGrid.selectedItem.id;
+				newAttendee.firstName = attendeeFirstName.text;
+				newAttendee.lastName = attendeeLastName.text;
+				newAttendee.email = attendeeEmail.text;
+				newAttendee.meeting = attendeeMeeting.selectedItem as MeetingVO;
+				this.dispatchEvent(new AttendeeEvent(AttendeeEvent.UPDATE,newAttendee));
+				attendeeGrid.selectedItem = null;
+				clearForm();	
+			}
+			
+			private function createAttendee():void
+			{	
+				var newAttendee:AttendeeVO = new AttendeeVO();
+				newAttendee.firstName = attendeeFirstName.text;
+				newAttendee.lastName = attendeeLastName.text;
+				newAttendee.email = attendeeEmail.text;
+				newAttendee.meeting = attendeeMeeting.selectedItem as MeetingVO;
+				this.dispatchEvent(new AttendeeEvent(AttendeeEvent.CREATE,newAttendee));
+				clearForm();
+			}
+			
+			private function clearForm():void
+			{
+				attendeeFirstName.text = "";
+				attendeeLastName.text = "";
+				attendeeEmail.text = "";
+				attendeeMeeting.selectedIndex = -1;
+			}
+
+			private function attendeeGrid_changeHandler(event:ListEvent):void
+			{
+				if (attendeeGrid.selectedItem != null)
+				{
+					attendeeButton.label = 'Save attendee';
+					attendeeMeeting.selectedIndex = ArrayCollectionUtils.getItemIndexByProperty(ModelLocator.getInstance().meetings,'id',attendeeGrid.selectedItem.meeting.id);
+					
+				}
+				else
+				{
+					attendeeButton.label = 'Create attendee';	
+					attendeeMeeting.selectedIndex = -1;
+				}
+			}
+
+		]]>
+	</fx:Script>
+	
+	<mx:VBox width="50%">
+		
+		<s:Label text="Attendee Overview" styleName="gridHeader"/>
+		
+		<mx:DataGrid id="attendeeGrid" width="100%" dataProvider="{attendees}" change="attendeeGrid_changeHandler(event)">
+			<mx:columns>
+				<mx:DataGridColumn dataField="firstName" headerText="First Name" />
+				<mx:DataGridColumn dataField="lastName" headerText="Last Name" />
+				<mx:DataGridColumn dataField="email" headerText="Email" />
+				<mx:DataGridColumn dataField="meeting.title" headerText="Meeting" />
+			</mx:columns>
+		</mx:DataGrid>	
+		
+	</mx:VBox>
+	
+	<mx:Form>
+		<mx:FormHeading label="Attendee"/>
+		
+		<mx:FormItem label="Id">
+			<s:Label id="attendeeId" text="{attendeeGrid.selectedItem.id}" />
+		</mx:FormItem>
+		
+		<mx:FormItem label="First Name">
+			<s:TextInput id="attendeeFirstName" text="{attendeeGrid.selectedItem.firstName}" />
+		</mx:FormItem>
+		
+		<mx:FormItem label="Last Name">
+			<s:TextInput id="attendeeLastName" text="{attendeeGrid.selectedItem.lastName}"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Email">
+			<s:TextInput id="attendeeEmail" text="{attendeeGrid.selectedItem.email}"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Meeting">
+			<mx:ComboBox id="attendeeMeeting" prompt="-please select an event-" dataProvider="{meetings}" labelField="title" />
+		</mx:FormItem>
+	
+		<mx:FormItem>
+			<s:Button id="attendeeButton" click="handleAttendeeButton(event)" label="Create attendee"/>
+		</mx:FormItem>
+		
+		<mx:FormItem>
+			<s:Button id="deleteButton" click="handleDeleteButton(event)" label="Delete attendee" enabled="{attendeeGrid.selectedItem!=null?true:false}" />
+		</mx:FormItem>
+		
+	</mx:Form>
+	
+</mx:HBox>
