@@ -77,10 +77,6 @@
 				winnerAnim.start();
 			} 
 			
-			public function onComplete(e:Event):void{
-				trace("complete");	
-			}
-			
 			private function filterAttendees(item:Object):Boolean
 			{
 				var isMatch:Boolean = false;
