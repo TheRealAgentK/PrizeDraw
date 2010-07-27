@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="Export Attendees">
+	
+	<fx:Metadata>
+		[Event(name="drawAttendee", type="nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent")]	
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[		
+			import nz.co.codec.flexorm.EntityManager;
+			import nz.co.ventego.demo.ix.prizeDraw.event.AttendeeEvent;
+			import nz.co.ventego.demo.ix.prizeDraw.model.AttendeeVO;
+			
+			import mx.events.ListEvent;
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]
+			public var attendees:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var meetings:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var entityManager:EntityManager = EntityManager.instance;
+			
+			private function meetingChangedHandler(event:ListEvent):void
+			{
+			
+			}
+			
+			private function handleExportButton(event:MouseEvent):void
+			{
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:Form>
+		<mx:FormHeading label="Export Attendees"/>
+		
+		<mx:FormItem label="Select meeting">
+			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" change="meetingChangedHandler(event)"/>
+		</mx:FormItem>	
+	
+		<mx:FormItem>
+			<s:Button id="exportButton" click="handleExportButton(event)" label="Export attendees" />
+		</mx:FormItem>
+	</mx:Form>
+	
+	<mx:Text fontFamily="ArialBlackCustom" fontSize="40" id="output" />
+</mx:VBox>

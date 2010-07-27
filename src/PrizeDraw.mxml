@@ -88,6 +88,8 @@
 		
 		<view:AttendeeView attendees="{model.attendees}" meetings="{model.meetings}" createAttendee="newAttendeeHandler(event)" updateAttendee="updateAttendeeHandler(event)" deleteAttendee="deleteAttendeeHandler(event)"/>
 		
+		<view:ExportImportView attendees="{model.attendees}" meetings="{model.meetings}" />
+		
 		<view:PrizeDrawView meetings="{model.meetings}" attendees="{model.attendees}" drawAttendee="updateAttendeeHandler(event)"/>
 			
 	</mx:TabNavigator>
