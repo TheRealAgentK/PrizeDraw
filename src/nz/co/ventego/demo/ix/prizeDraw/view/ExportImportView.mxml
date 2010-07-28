@@ -49,7 +49,7 @@
 		</mx:FormItem>	
 	
 		<mx:FormItem>
-			<s:Button id="exportButton" click="handleExportButton(event)" label="Export attendees" />
+			<s:Button id="exportButton" click="handleExportButton(event)" label="Export attendees" enabled="{meetingCombo.selectedIndex>=0}" />
 		</mx:FormItem>
 	</mx:Form>
 	
