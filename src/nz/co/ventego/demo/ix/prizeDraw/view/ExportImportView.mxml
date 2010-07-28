@@ -7,6 +7,7 @@
 	
 	<fx:Metadata>
 		[Event(name="exportMeetingData", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]	
+		[Event(name="exportMeetingDataNative", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]	
 	</fx:Metadata>
 	
 	<fx:Script>
@@ -34,8 +35,16 @@
 				selectedMeeting.id = meetingCombo.selectedItem.id;
 				selectedMeeting.title = meetingCombo.selectedItem.title;
 				selectedMeeting.date = meetingCombo.selectedItem.date;
-				var exportFileName:String = fileNameTI.text;
-				this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT,selectedMeeting,exportFileName));
+				
+				if (event.target == exportButton)
+				{	
+					var exportFileName:String = fileNameTI.text;
+					this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT,selectedMeeting,exportFileName));
+				}
+				else if (event.target == exportButtonNative)
+				{
+					this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT_NATIVE,selectedMeeting));
+				}			
 			}
 			
 			private function filterAttendeesCrit(item:Object):Boolean
@@ -65,7 +74,7 @@
 	
 	<mx:VBox width="50%">
 		
-		<s:Label text="Attendee List" styleName="gridHeader"/>
+		<s:Label text="DragDrop Attendee List" styleName="gridHeader"/>
 		
 		<mx:DataGrid id="attendeeGrid" width="100%" dataProvider="{filterAttendees}" allowMultipleSelection="true" dragEnabled="true">
 			<mx:columns>
@@ -90,6 +99,10 @@
 		
 		<mx:FormItem>
 			<s:Button id="exportButton" click="handleExportButton(event)" label="Export attendees" enabled="{meetingCombo.selectedIndex>=0}" />
+		</mx:FormItem>
+		
+		<mx:FormItem>
+			<s:Button id="exportButtonNative" click="handleExportButton(event)" label="Export attendees to native Application" enabled="{meetingCombo.selectedIndex>=0}" />
 		</mx:FormItem>
 	</mx:Form>
 	

@@ -82,6 +82,12 @@
 				MeetingManager.exportMeetingData(meeting,exportFileName);
 			}
 			
+			private function exportMeetingDataNative(e:MeetingEvent):void
+			{
+				var meeting:MeetingVO = e.meeting;
+				MeetingManager.exportMeetingDataNative(meeting);
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -95,7 +101,7 @@
 		
 		<view:AttendeeView attendees="{model.attendees}" meetings="{model.meetings}" createAttendee="newAttendeeHandler(event)" updateAttendee="updateAttendeeHandler(event)" deleteAttendee="deleteAttendeeHandler(event)"/>
 		
-		<view:ExportImportView attendees="{model.attendees}" meetings="{model.meetings}" exportMeetingData="exportMeetingData(event)"/>
+		<view:ExportImportView attendees="{model.attendees}" meetings="{model.meetings}" exportMeetingData="exportMeetingData(event)" exportMeetingDataNative="exportMeetingDataNative(event)"/>
 		
 		<view:PrizeDrawView meetings="{model.meetings}" attendees="{model.attendees}" drawAttendee="updateAttendeeHandler(event)"/>
 			
