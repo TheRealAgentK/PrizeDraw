@@ -12,11 +12,13 @@ package nz.co.ventego.demo.ix.prizeDraw.event
 		public static const EXPORT:String = "exportMeetingData";
 		
 		public var meeting:MeetingVO;
+		public var exportFileName:String;
 		
-		public function MeetingEvent(type:String, meeting:MeetingVO)
+		public function MeetingEvent(type:String, meeting:MeetingVO, exportFileName:String = "")
 		{
 			super(type);
 			this.meeting = meeting;
+			this.exportFileName = exportFileName;
 		}
 	}
 }

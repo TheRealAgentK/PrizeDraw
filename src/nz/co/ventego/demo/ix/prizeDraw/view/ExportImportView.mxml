@@ -10,12 +10,12 @@
 	
 	<fx:Script>
 		<![CDATA[		
+			import mx.collections.ArrayCollection;
+			import mx.events.ListEvent;
+			
 			import nz.co.codec.flexorm.EntityManager;
 			import nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent;
 			import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
-			
-			import mx.events.ListEvent;
-			import mx.collections.ArrayCollection;
 			
 			[Bindable]
 			public var attendees:ArrayCollection = new ArrayCollection();
@@ -24,18 +24,14 @@
 			[Bindable]
 			public static var entityManager:EntityManager = EntityManager.instance;
 			
-			private function meetingChangedHandler(event:ListEvent):void
-			{
-			
-			}
-			
 			private function handleExportButton(event:MouseEvent):void
 			{
 				var selectedMeeting:MeetingVO = new MeetingVO();
 				selectedMeeting.id = meetingCombo.selectedItem.id;
 				selectedMeeting.title = meetingCombo.selectedItem.title;
 				selectedMeeting.date = meetingCombo.selectedItem.date;
-				this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT,selectedMeeting));
+				var exportFileName:String = fileNameTI.text;
+				this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT,selectedMeeting,exportFileName));
 			}
 			
 		]]>
@@ -45,13 +41,16 @@
 		<mx:FormHeading label="Export Attendees"/>
 		
 		<mx:FormItem label="Select meeting">
-			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" change="meetingChangedHandler(event)"/>
+			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" />
 		</mx:FormItem>	
-	
+		
+		<mx:FormItem label="File name">
+			<mx:TextInput id="fileNameTI" />
+		</mx:FormItem>	
+		
 		<mx:FormItem>
 			<s:Button id="exportButton" click="handleExportButton(event)" label="Export attendees" enabled="{meetingCombo.selectedIndex>=0}" />
 		</mx:FormItem>
 	</mx:Form>
 	
-	<mx:Text fontFamily="ArialBlackCustom" fontSize="40" id="output" />
 </mx:VBox>

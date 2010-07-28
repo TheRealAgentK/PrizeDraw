@@ -78,7 +78,8 @@
 			private function exportMeetingData(e:MeetingEvent):void
 			{
 				var meeting:MeetingVO = e.meeting;
-				MeetingManager.exportMeetingData(meeting);
+				var exportFileName:String = e.exportFileName;
+				MeetingManager.exportMeetingData(meeting,exportFileName);
 			}
 			
 		]]>
