@@ -11,7 +11,7 @@ package nz.co.ventego.demo.ix.prizeDraw.event
 		public static const DELETE:String = "deleteAttendee";
 		public static const DRAW:String = "drawAttendee";
 		
-		public var attendee:AttendeeVO
+		public var attendee:AttendeeVO;
 		
 		public function AttendeeEvent(type:String, attendee:AttendeeVO)
 		{

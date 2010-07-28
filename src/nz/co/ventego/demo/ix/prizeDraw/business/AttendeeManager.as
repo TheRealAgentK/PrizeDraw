@@ -20,8 +20,7 @@ package nz.co.ventego.demo.ix.prizeDraw.business
 		public static function updateAttendee(attendee:AttendeeVO):void
 		{
 			entityManager.save(attendee);
-			ModelLocator.getInstance().attendees.setItemAt(attendee,ArrayCollectionUtils.getItemIndexByProperty(ModelLocator.getInstance().attendees,"id",attendee.id));
-			
+			ModelLocator.getInstance().attendees.setItemAt(attendee,ArrayCollectionUtils.getItemIndexByProperty(ModelLocator.getInstance().attendees,"id",attendee.id));			
 		}
 		
 		public static function deleteAttendee(attendee:AttendeeVO):void

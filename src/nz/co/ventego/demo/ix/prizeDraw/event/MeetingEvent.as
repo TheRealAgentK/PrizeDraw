@@ -9,8 +9,9 @@ package nz.co.ventego.demo.ix.prizeDraw.event
 		public static const CREATE:String = "createMeeting";
 		public static const UPDATE:String = "updateMeeting";
 		public static const DELETE:String = "deleteMeeting";
+		public static const EXPORT:String = "exportMeetingData";
 		
-		public var meeting:MeetingVO
+		public var meeting:MeetingVO;
 		
 		public function MeetingEvent(type:String, meeting:MeetingVO)
 		{

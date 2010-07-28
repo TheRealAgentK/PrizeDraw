@@ -21,5 +21,10 @@ package nz.co.ventego.demo.ix.prizeDraw.model
 		
 		[ManyToOne(name="meetingId", inverse="true")]
 		public var meeting:MeetingVO;	
+		
+		public function toCSVString():String
+		{
+			return this.id + "," + this.lastName + "," + this.firstName + "," + this.email + "\n";
+		}
 	}
 }

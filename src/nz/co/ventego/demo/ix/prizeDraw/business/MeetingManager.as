@@ -1,9 +1,11 @@
 package nz.co.ventego.demo.ix.prizeDraw.business
 {
-	import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
-	import nz.co.ventego.demo.ix.prizeDraw.model.AttendeeVO;
-	import nz.co.ventego.demo.ix.prizeDraw.model.ModelLocator;
+	import mx.collections.ArrayCollection;
+	
 	import nz.co.codec.flexorm.EntityManager;
+	import nz.co.ventego.demo.ix.prizeDraw.model.AttendeeVO;
+	import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
+	import nz.co.ventego.demo.ix.prizeDraw.model.ModelLocator;
 	import nz.co.ventego.util.ArrayCollectionUtils;
 
 	public class MeetingManager
@@ -31,8 +33,18 @@ package nz.co.ventego.demo.ix.prizeDraw.business
 		{
 			entityManager.remove(meeting);
 			model.meetings.removeItemAt(ArrayCollectionUtils.getItemIndexByProperty(model.meetings,"id",meeting.id));
-			model.attendees = entityManager.findAll(AttendeeVO);
+			model.attendees = entityManager.findAll(AttendeeVO);	
+		}
+		
+		public static function exportMeetingData(meeting:MeetingVO):void
+		{
+			var exportString:String = "";
+			var attendees:ArrayCollection = entityManager.load(MeetingVO,meeting.id).attendees;
 			
+			for (var i:int=0; i<attendees.length; i++)
+			{
+				exportString = exportString + (attendees.getItemAt(i) as AttendeeVO).toCSVString();		
+			}		
 		}
 		
 		public static function loadInitialData():void
