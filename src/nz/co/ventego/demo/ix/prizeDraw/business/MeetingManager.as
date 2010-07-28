@@ -56,7 +56,6 @@ package nz.co.ventego.demo.ix.prizeDraw.business
 			stream.open(file,FileMode.WRITE);
 			stream.writeUTFBytes(exportString);
 			stream.close();
-
 		}
 		
 		public static function loadInitialData():void

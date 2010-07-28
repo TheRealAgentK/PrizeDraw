@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 label="Export Attendees">
+		 label="Export Attendees"
+		 xmlns:util="nz.co.ventego.util.*">
 	
 	<fx:Metadata>
 		[Event(name="exportMeetingData", type="nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent")]	
@@ -24,6 +25,9 @@
 			[Bindable]
 			public static var entityManager:EntityManager = EntityManager.instance;
 			
+			[Bindable]
+			private var filterAttendees:ArrayCollection;
+			
 			private function handleExportButton(event:MouseEvent):void
 			{
 				var selectedMeeting:MeetingVO = new MeetingVO();
@@ -34,14 +38,50 @@
 				this.dispatchEvent(new MeetingEvent(MeetingEvent.EXPORT,selectedMeeting,exportFileName));
 			}
 			
+			private function filterAttendeesCrit(item:Object):Boolean
+			{
+				var isMatch:Boolean = false;
+				
+				if (item.meeting.id == meetingCombo.selectedItem.id)
+				{
+					isMatch = true;
+				}
+				
+				return isMatch;
+			}
+			
+			private function meetingChangedHandler(event:ListEvent):void
+			{
+				filterAttendees = new ArrayCollection(attendees.source as Array);
+				filterAttendees.filterFunction = filterAttendeesCrit;
+				filterAttendees.refresh();			
+			}
 		]]>
 	</fx:Script>
+	
+	<fx:Declarations>
+		<util:DragExcel dataGrid="{attendeeGrid}"/>
+	</fx:Declarations>
+	
+	<mx:VBox width="50%">
+		
+		<s:Label text="Attendee List" styleName="gridHeader"/>
+		
+		<mx:DataGrid id="attendeeGrid" width="100%" dataProvider="{filterAttendees}" allowMultipleSelection="true" dragEnabled="true">
+			<mx:columns>
+				<mx:DataGridColumn dataField="firstName" headerText="First Name" />
+				<mx:DataGridColumn dataField="lastName" headerText="Last Name" />
+				<mx:DataGridColumn dataField="email" headerText="Email" />
+			</mx:columns>
+		</mx:DataGrid>	
+		
+	</mx:VBox>
 	
 	<mx:Form>
 		<mx:FormHeading label="Export Attendees"/>
 		
 		<mx:FormItem label="Select meeting">
-			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" />
+			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" change="meetingChangedHandler(event)" />
 		</mx:FormItem>	
 		
 		<mx:FormItem label="File name">
@@ -53,4 +93,4 @@
 		</mx:FormItem>
 	</mx:Form>
 	
-</mx:VBox>
+</mx:HBox>

@@ -101,6 +101,8 @@
 		]]>
 	</fx:Script>
 	
+
+	
 	<mx:VBox width="50%">
 		
 		<s:Label text="Attendee Overview" styleName="gridHeader"/>
