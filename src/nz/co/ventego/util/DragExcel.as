@@ -1,22 +1,23 @@
 package nz.co.ventego.util
 {
-	import flash.events.MouseEvent;
 	import flash.desktop.Clipboard;
-	import flash.desktop.NativeDragOptions;
 	import flash.desktop.ClipboardFormats;
 	import flash.desktop.NativeDragManager;
+	import flash.desktop.NativeDragOptions;
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
-	import flash.display.Bitmap;
-	import flash.net.URLRequest;
 	import flash.events.Event;
-	import mx.controls.DataGrid;
-	import mx.collections.ArrayCollection;
+	import flash.events.MouseEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	
+	import mx.collections.ArrayCollection;
+	import mx.controls.DataGrid;
 	import mx.controls.dataGridClasses.DataGridColumn;
 	import mx.formatters.DateFormatter;
+	import mx.core.BitmapAsset;
 	
 	public class DragExcel
 	{
@@ -24,19 +25,22 @@ package nz.co.ventego.util
 		private var dateFormatter:DateFormatter;
 		private var dragIcon:BitmapData;
 		
+		[Embed(source="assets/images/icon_excel.png")] 
+		[Bindable] 
+		public var ExcelIcon:Class;
+				
 		public function DragExcel()
 		{
-			/*var loader:Loader = new Loader();
-            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, 
-				function ():void
-				{
-					dragIcon = Bitmap(loader.content).bitmapData;
-				}
-			);
-			loader.load(new URLRequest("/assets/images/icon_excel.png"));*/
+			dragIcon = getBitmapData();			
 			dateFormatter = new DateFormatter();
 			dateFormatter.formatString = "YYYY-MM-DD-HH-NN-SS";
 		} 
+		
+		private function getBitmapData():BitmapData
+		{
+			    var bitmapAsset:BitmapAsset = new ExcelIcon();
+			    return bitmapAsset.bitmapData;
+		}
 		
 		public function set dataGrid(dataGrid:DataGrid):void
 		{
