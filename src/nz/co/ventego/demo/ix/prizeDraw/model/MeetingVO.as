@@ -30,5 +30,22 @@ package nz.co.ventego.demo.ix.prizeDraw.model
 		{
 			return _attendees;
 		}
+		
+		public function toHMTLList():String
+		{
+			var htmlTable:String = "<p>Meeting:" + this.title + "</p>" + "<p>Date:" + this.date.toString() + "</p>";
+				
+			for (var i:int = 0; i < attendees.length; i++)
+			{
+				var attendee:AttendeeVO = attendees.getItemAt(i) as AttendeeVO;
+				
+				htmlTable = htmlTable + "<li>" + attendee.firstName + " " + attendee.lastName + "(Attendee ID: " + attendee.id + ", Email: " + attendee.email +")</li>";
+			}
+			
+			htmlTable = htmlTable + "</table>";
+			
+			return htmlTable;	
+		}
+		
 	}
 }

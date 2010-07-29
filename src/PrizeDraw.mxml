@@ -103,6 +103,8 @@
 		
 		<view:ExportImportView attendees="{model.attendees}" meetings="{model.meetings}" exportMeetingData="exportMeetingData(event)" exportMeetingDataNative="exportMeetingDataNative(event)"/>
 		
+		<view:PrintView meetings="{model.meetings}" />
+		
 		<view:PrizeDrawView meetings="{model.meetings}" attendees="{model.attendees}" drawAttendee="updateAttendeeHandler(event)"/>
 			
 	</mx:TabNavigator>

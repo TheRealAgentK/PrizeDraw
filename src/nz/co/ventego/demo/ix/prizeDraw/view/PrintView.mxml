@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 label="Print Attendees"
+		 xmlns:util="nz.co.ventego.util.*"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[		
+			import mx.collections.ArrayCollection;
+			import mx.events.ListEvent;
+			import mx.core.FlexGlobals;
+						
+			import nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent;
+			import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
+						
+			[Bindable]
+			public var meetings:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			private var filterAttendees:ArrayCollection;
+			
+			[Bindable] 
+			private var printersData:ArrayCollection;
+			
+			[Bindable] 
+			public var paperData:ArrayCollection = new ArrayCollection([{label:"A4", data:"a4", w:595, h:842},{label:"A5", data:"a5", w:420, h:595}]);
+			
+			private var printJob:PrintJob;
+						
+			private function init():void
+			{
+				var printerList:Vector.<String> = PrintJob.printers;
+				var p:ArrayCollection = new ArrayCollection();
+				for (var i:int = 0; i < printerList.length; i++)
+				{
+					p.addItem(printerList[i]);
+				}
+				this.printersData = p;
+					
+				this.printJob = new PrintJob();
+
+				updatePage();
+				updateWindow();				
+			}
+			
+			private function updatePage():void
+			{
+				page.width = int(printJob.paperArea.width);
+				page.height = int(printJob.paperArea.height);
+				printableArea.x = int(printJob.printableArea.left);
+				printableArea.y = int(printJob.printableArea.top);
+				printableArea.width = int(printJob.printableArea.width);				
+				printableArea.height = int(printJob.printableArea.height);				
+			}	
+			
+			private function printerChanged():void
+			{
+				if (printJob)
+				{
+					printJob.printer = formPrinters.selectedItem.toString();
+					updatePage();
+					updateWindow();
+				}
+			}
+			
+			private function paperChanged():void
+			{
+				if (printJob)
+				{
+					var selection:String = formPaper.selectedItem.data;
+					printJob.selectPaperSize(selection);
+					updatePage();
+					updateWindow();
+				}
+			}
+			
+			private function updateWindow():void
+			{
+				const __WIDTH_PADDING:int = 50;
+				const __HEIGHT_PADDING:int = 50;
+				FlexGlobals.topLevelApplication.width = printForm.width + page.width + __WIDTH_PADDING;				
+				FlexGlobals.topLevelApplication.height = (page.height > printForm.minHeight ) ? page.height + __HEIGHT_PADDING : printForm.minHeight + __HEIGHT_PADDING;
+			}
+			
+			private function showPrint(showSystemUI:Boolean):void
+			{				
+				var success:Boolean = printJob.start2(null, showSystemUI); 
+				if (!success) return;
+				
+				var pjo:PrintJobOptions = new PrintJobOptions;
+				
+				printJob.addPage(printableArea, null, pjo);				
+				printJob.send();
+				
+				updatePage();
+				updateWindow();				
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:VBox width="50%" id="page" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		
+		<s:Label text="Print Attendee List" styleName="gridHeader"/>
+		
+		<s:Group id="printableArea">
+			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<mx:SolidColor>
+						<mx:color>0xEEEEEE</mx:color>
+					</mx:SolidColor>
+				</s:fill>
+			</s:Rect>
+			<mx:Text id="mainTextArea" x="0" y="0" 
+					 width="100%" height="100%" 
+					 left="30" right="30" top="30" bottom="30"
+					 htmlText="{(meetingCombo.selectedItem as MeetingVO).toHMTLList()}"
+					 fontSize="12" />			
+			
+			<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">																
+				<s:RichText id="draftText"
+							text="DRAFT"
+							rotation="60"
+							fontSize="{(printableArea.width > 350 &amp;&amp; printableArea.height > 350) ? 100 : 50}"
+							fontWeight="bold"							
+							color="#FF0000" alpha="0.2" />			
+			</s:HGroup>
+		</s:Group>
+	</mx:VBox>
+	
+	<mx:Form width="50%" id="printForm">
+		<mx:FormHeading label="Print Attendees"/>
+		
+		<mx:FormItem label="Select meeting">
+			<mx:ComboBox id="meetingCombo" prompt="-please select a meeting-" dataProvider="{meetings}" labelField="title" />
+		</mx:FormItem>	
+		
+		<mx:FormItem label="Select printer">
+			<mx:ComboBox id="formPrinters" prompt="-please select a printer-" dataProvider="{printersData}" change="printerChanged()" /> 	
+		</mx:FormItem>	
+		
+		<mx:FormItem label="Select page size">
+			<mx:ComboBox id="formPaper" prompt="-please select a page size-" dataProvider="{paperData}" change="paperChanged()" />			
+		</mx:FormItem>	
+		
+		<mx:FormItem>
+			<s:Button id="printButton" click="showPrint(false)" label="Print attendee list" enabled="{meetingCombo.selectedIndex>=0}" />
+		</mx:FormItem>
+		
+		<mx:FormItem>
+			<s:Button id="printButtonDialog" click="showPrint(true)" label="Print attendees list with dialog" enabled="{meetingCombo.selectedIndex>=0}" />
+		</mx:FormItem>
+	</mx:Form>
+		
+</mx:HBox>

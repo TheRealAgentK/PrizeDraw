@@ -92,7 +92,7 @@ package nz.co.ventego.demo.ix.prizeDraw.business
 			stream.close();
 
 			file.openWithDefaultApplication();		
-		}
+		}		
 		
 		public static function loadInitialData():void
 		{
