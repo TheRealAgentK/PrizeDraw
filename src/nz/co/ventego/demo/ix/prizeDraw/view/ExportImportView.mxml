@@ -14,8 +14,7 @@
 		<![CDATA[		
 			import mx.collections.ArrayCollection;
 			import mx.events.ListEvent;
-			
-			import nz.co.codec.flexorm.EntityManager;
+		
 			import nz.co.ventego.demo.ix.prizeDraw.event.MeetingEvent;
 			import nz.co.ventego.demo.ix.prizeDraw.model.MeetingVO;
 			
@@ -23,8 +22,6 @@
 			public var attendees:ArrayCollection = new ArrayCollection();
 			[Bindable]
 			public var meetings:ArrayCollection = new ArrayCollection();
-			[Bindable]
-			public static var entityManager:EntityManager = EntityManager.instance;
 			
 			[Bindable]
 			private var filterAttendees:ArrayCollection;
